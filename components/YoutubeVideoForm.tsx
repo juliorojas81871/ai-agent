@@ -1,12 +1,15 @@
 import React from 'react'
 import Form from "next/form";
 import AnalyseButton from './AnalyseButton';
+import { analyseYoutubeVideo } from "@/actions/analyseYoutubeVideo";
 
 function YoutubeVideoForm() {
   return (
     <div className="w-full max-w-2xl mx-auto">
         <Form
-            className="flex flex-col sm:flex-row gap-2 items-center"
+          className="flex flex-col sm:flex-row gap-2 items-center"
+          action={analyseYoutubeVideo}
+
         >
             <input
               placeholder='Enter Youtube Url'

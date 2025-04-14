@@ -1,13 +1,14 @@
 "use server";
 
+import { getVideoIdFromUrl } from "@/lib/getVideoIdFromUrl";
 import { redirect } from "next/navigation";
 
 export async function analyseYoutubeVideo(formData: FormData) {
     const url = formData.get("url")?.toString();
     if (!url) return;
 
-    //   TODO:
-    const videoId = "123";
+    const videoId = getVideoIdFromUrl(url);
+    console.log("videoid: ", videoId)
 
     if (!videoId) return;
 
