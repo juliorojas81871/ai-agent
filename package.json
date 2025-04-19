@@ -17,6 +17,7 @@
     "@schematichq/schematic-typescript-node": "^1.1.10",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "googleapis": "^148.0.0",
     "lucide-react": "^0.487.0",
     "next": "15.3.0-canary.40",
     "react": "^19.0.0",
