@@ -25,7 +25,6 @@ function YoutubeVideoDetails({ videoId } : { videoId: string}) {
             </div>
         );
     }
-    console.log(video.thumbnail)
 
     return (
         <div className="@container bg-white rounded-xl">
