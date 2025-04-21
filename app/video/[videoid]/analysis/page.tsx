@@ -1,4 +1,5 @@
 "use client"
+import AiAgentChat from '@/components/AiAgentChat'
 import ThumbnailGeneration from '@/components/ThumbnailGeneration'
 import TitleGenerations from '@/components/TitleGenerations'
 import Transcription from '@/components/Transcription'
@@ -22,24 +23,26 @@ function AnalysisPage() {
                   <Usage featureFlag={FeatureFlag.ANALYSE_VIDEO} title='Analyse Video'/>
                 </div>
             {/* video transcription */}
+
+            {/* video details */}
+            <YoutubeVideoDetails videoId={videoId} />
+
+            {/* thumbnail */}
+            <ThumbnailGeneration videoId={videoId} />
+
+
+            {/* title */}
+            <TitleGenerations videoId={videoId}/>
+
+            {/* transcription */}
+            <Transcription videoId={videoId}/>
           </div>
 
-          {/* video details */}
-          <YoutubeVideoDetails videoId={videoId} />
-
-          {/* thumbnail */}
-          <ThumbnailGeneration videoId={videoId} />
-
-
-          {/* title */}
-          <TitleGenerations videoId={videoId}/>
-
-          {/* transcription */}
-          <Transcription videoId={videoId}/>
-
-        {/* right */}
+          {/* right */}
+          <div className='order-1 lg:order-2 lg:sticky lg:top-20 h-[500px] md:h-[calc(100vh-6rem)]'>
+            <AiAgentChat videoId={videoId} />
+          </div>
       </div>
-     
     </div>
   )
 }
