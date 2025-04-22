@@ -4,13 +4,14 @@ import { useChat } from "@ai-sdk/react";
 import { Button } from './ui/button';
 
 function AiAgentChat({ videoId }: { videoId: string }) {
-    const { messages, input, handleInputChange, handleSubmit, append, status } =
-    useChat({
+    const { messages, input, handleInputChange, handleSubmit, append, status } = useChat({
       maxSteps: 5,
       body: {
         videoId,
       },
     });
+
+    console.log(messages)
 
     return (
         <div className='flex flex-col h-full'>
