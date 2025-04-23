@@ -1,17 +1,16 @@
 import { getVideoDetails } from "@/actions/getVideoDetails";
-import { createAnthropic } from "@ai-sdk/anthropic";
 import { currentUser } from "@clerk/nextjs/server";
 import { streamText } from "ai";
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { NextResponse } from "next/server";
+import fetchTranscript from "@/tools/fetchTranscript";
 
-const anthropic = createAnthropic({
-    apiKey: process.env.CLAUDE_API_KEY,
-    headers: {
-      "anthropic-beta": "token-efficient-tools-2025-02-19",
-    },
-  });
+const google = createGoogleGenerativeAI({
+    apiKey: process.env.GEMINI_API_KEY,
+});
 
-  const model = anthropic("claude-3-7-sonnet-20250219");
+const model = google("gemini-2.0-flash-001")
+
 
 export async function POST(req: Request) {
     const { messages, videoId } = await req.json();
@@ -31,6 +30,9 @@ export async function POST(req: Request) {
     const result = streamText({
         model,
         messages: [{ role: "system", content: systemMessage }, ...messages],
+        tools: {
+            fetchTranscript: fetchTranscript,
+        }
     });
 
 
