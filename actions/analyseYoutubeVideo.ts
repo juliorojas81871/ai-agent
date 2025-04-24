@@ -8,7 +8,6 @@ export async function analyseYoutubeVideo(formData: FormData) {
     if (!url) return;
 
     const videoId = getVideoIdFromUrl(url);
-    console.log("videoid11: ", videoId)
 
     if (!videoId) return;
 

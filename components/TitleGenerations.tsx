@@ -2,7 +2,7 @@
 import { useUser } from '@clerk/nextjs';
 import React from 'react'
 import Usage from './Usage';
-import { FeatureFlag } from '@/features/flag';
+import { FeatureFlag } from '@/features/flags';
 import { useSchematicEntitlement } from '@schematichq/schematic-react';
 import { Copy } from 'lucide-react';
 

@@ -1,17 +1,38 @@
 "use client"
+import { createOrGetVideo } from '@/actions/createOrGetVideo'
 import AiAgentChat from '@/components/AiAgentChat'
 import ThumbnailGeneration from '@/components/ThumbnailGeneration'
 import TitleGenerations from '@/components/TitleGenerations'
 import Transcription from '@/components/Transcription'
 import Usage from '@/components/Usage'
 import YoutubeVideoDetails from '@/components/YoutubeVideoDetails'
-import { FeatureFlag } from '@/features/flag'
+import { Doc } from '@/convex/_generated/dataModel'
+import { FeatureFlag } from '@/features/flags'
+import { useUser } from '@clerk/nextjs'
 import { useParams } from 'next/navigation'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 function AnalysisPage() {
   const params = useParams<{ videoid: string }>();
   const { videoid: videoId  } = params;
+  const [video, setVideo] = useState<Doc<"videos"> | null | undefined>(
+    undefined
+  )
+  const {user} = useUser();
+
+  useEffect(()=>{
+    if(!user?.id) return;
+
+    const fetchVideo = async () =>{
+      const response = await createOrGetVideo(videoId as string, user.id)
+      if(!response.success){
+
+      }else{
+        setVideo(response.data!)
+      }
+    }
+    fetchVideo();
+  },[videoId,user])
 
   return (
     <div className='xl:container mx-auto px-4 md:px-0'>

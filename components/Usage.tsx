@@ -1,6 +1,6 @@
 "use client"
 
-import { FeatureFlag } from '@/features/flag'
+import { FeatureFlag } from '@/features/flags'
 import React from 'react'
 import {
     useSchematicEntitlement,

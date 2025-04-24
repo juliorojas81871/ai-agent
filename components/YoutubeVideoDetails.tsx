@@ -12,7 +12,6 @@ function YoutubeVideoDetails({ videoId } : { videoId: string}) {
         const fetchVideoDetails = async () => {
           const video = await getVideoDetails(videoId);
           setVideo(video);
-          console.log(video)
         };
 
         fetchVideoDetails();
