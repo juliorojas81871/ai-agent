@@ -42,8 +42,8 @@ export const createOrGetVideo = async (
 
     try {
         const video = await convex.query(api.videos.getVideoById, {
-        videoId,
-        userId,
+            videoId,
+            userId,
         });
 
         if (!video) {
