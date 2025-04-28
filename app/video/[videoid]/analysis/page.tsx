@@ -10,29 +10,91 @@ import { Doc } from '@/convex/_generated/dataModel'
 import { FeatureFlag } from '@/features/flags'
 import { useUser } from '@clerk/nextjs'
 import { useParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 
 function AnalysisPage() {
   const params = useParams<{ videoid: string }>();
-  const { videoid: videoId  } = params;
-  const [video, setVideo] = useState<Doc<"videos"> | null | undefined>(
-    undefined
-  )
-  const {user} = useUser();
+  const { videoid: videoId } = params;
+  const [video, setVideo] = useState<Doc<"videos"> | null | undefined>(undefined);
+  const { user } = useUser();
+  const [hasFetched, setHasFetched] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(()=>{
-    if(!user?.id) return;
+  // Use refs to track previous values and prevent unnecessary effects
+  const prevVideoIdRef = useRef<string | null>(null);
+  const prevUserIdRef = useRef<string | null>(null);
+  const fetchInProgressRef = useRef(false);
 
-    const fetchVideo = async () =>{
-      const response = await createOrGetVideo(videoId as string, user.id)
-      if(!response.success){
+  // Effect to fetch video data
+  useEffect(() => {
+    // Skip if no user or already fetched
+    if (!user?.id || hasFetched || isLoading || fetchInProgressRef.current) return;
 
-      }else{
-        setVideo(response.data!)
+    // Skip if videoId or userId hasn't changed
+    if (prevVideoIdRef.current === videoId && prevUserIdRef.current === user.id) return;
+
+    // Update refs
+    prevVideoIdRef.current = videoId;
+    prevUserIdRef.current = user.id;
+
+    // Set loading state
+    setIsLoading(true);
+    fetchInProgressRef.current = true;
+
+    // Fetch video data
+    const fetchVideo = async () => {
+      try {
+        const response = await createOrGetVideo(videoId as string, user.id);
+        if (response.success) {
+          setVideo(response.data!);
+          setHasFetched(true);
+        }
+      } catch (error) {
+        console.error('Error fetching video:', error);
+      } finally {
+        setIsLoading(false);
+        fetchInProgressRef.current = false;
       }
-    }
+    };
+
     fetchVideo();
-  },[videoId,user])
+  }, [videoId, user?.id, hasFetched, isLoading]);
+
+  // Memoize the status component to prevent unnecessary rerenders
+  const VideoTranscriptionStatus = React.useMemo(() => {
+    if (video === undefined) {
+      return (
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-full">
+          <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" />
+          <span className="text-sm text-gray-700">Loading...</span>
+        </div>
+      );
+    }
+
+    if (!video) {
+      return (
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-full">
+          <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" />
+          <p className="text-sm text-amber-700">
+            This is your first time analyzing this video. <br />
+            <span className="font-semibold">
+              (1 Analysis token is being used!)
+            </span>
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-full">
+        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+        <p className="text-sm text-green-700">
+          Analysis exists for this video - no additional tokens needed in future
+          calls! <br />
+        </p>
+      </div>
+    );
+  }, [video]);
 
   return (
     <div className='xl:container mx-auto px-4 md:px-0'>
@@ -42,6 +104,7 @@ function AnalysisPage() {
             {/* analysis */}
                 <div className='flex flex-col gap-4 p-4 border border-gray-200'>
                   <Usage featureFlag={FeatureFlag.ANALYSE_VIDEO} title='Analyse Video'/>
+                  {VideoTranscriptionStatus}
                 </div>
             {/* video transcription */}
 
@@ -50,7 +113,6 @@ function AnalysisPage() {
 
             {/* thumbnail */}
             <ThumbnailGeneration videoId={videoId} />
-
 
             {/* title */}
             <TitleGenerations videoId={videoId}/>

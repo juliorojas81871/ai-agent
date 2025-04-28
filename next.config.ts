@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
         hostname: "yt3.ggpht.com",
         protocol: "https",
       },
+      {
+        hostname:"woozy-schnauzer-256.convex.cloud",
+        protocol:"https"
+      }
     ],
   },
 };

@@ -23,8 +23,8 @@ export const createOrGetVideo = async (
 
     if (!user) {
         return {
-        success: false,
-        error: "User not found",
+            success: false,
+            error: "User not found",
         };
     }
 
@@ -60,10 +60,10 @@ export const createOrGetVideo = async (
         await client.track({
             event: featureFlagEvents[FeatureFlag.ANALYSE_VIDEO].event,
             company: {
-            id: userId,
+                id: userId,
             },
             user: {
-            id: userId,
+                id: userId,
             },
         });
 
@@ -80,8 +80,8 @@ export const createOrGetVideo = async (
     } catch (error) {
         console.error("Error creating or getting video:", error);
         return {
-        success: false,
-        error: "An unexpected error occurred. Please try again later.",
+            success: false,
+            error: "An unexpected error occurred. Please try again later.",
         };
     }
 };

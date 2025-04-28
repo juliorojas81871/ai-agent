@@ -1,38 +1,42 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
 import { useSchematicEvents } from "@schematichq/schematic-react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const SchematicWrapped = ({ children }: { children: React.ReactNode }) => {
     const { user } = useUser();
     const { identify } = useSchematicEvents();
-
+    const lastIdentifiedUserId = useRef<string | null>(null);
 
     useEffect(() => {
-    const userName =
-        user?.id ??
-        user?.username ??
-        user?.fullName ??
-        user?.emailAddresses[0]?.emailAddress;
+        if (!user?.id) return;
 
-    if (user?.id) {
+        // Only identify if the user ID has changed
+        if (lastIdentifiedUserId.current === user.id) return;
+
+        const userName =
+            user?.id ??
+            user?.username ??
+            user?.fullName ??
+            user?.emailAddresses[0]?.emailAddress;
+
         identify({
-        // company level key
-        company: {
+            // company level key
+            company: {
+                keys: {
+                    id: user.id,
+                },
+                name: userName,
+            },
+            // user level key
             keys: {
-            id: user.id,
+                id: user.id,
             },
             name: userName,
-        },
-
-        // user level key
-        keys: {
-            id: user.id,
-        },
-        name: userName,
         });
-    }
-    }, [user, identify]);
+
+        lastIdentifiedUserId.current = user.id;
+    }, [user?.id, identify]); // Only depend on user.id instead of the entire user object
 
     return children;
 }

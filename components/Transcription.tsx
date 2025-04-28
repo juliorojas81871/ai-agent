@@ -1,8 +1,9 @@
 "use client";
 import { FeatureFlag } from '@/features/flags';
 import { useSchematicEntitlement } from '@schematichq/schematic-react';
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Usage from './Usage';
+import { getYoutubeTranscript } from '@/actions/getYoutubeTranscript';
 
 interface TranscriptEntry {
     text: string;
@@ -17,6 +18,23 @@ function Transcription({ videoId }: { videoId: string }) {
     const { featureUsageExceeded } = useSchematicEntitlement(
         FeatureFlag.TRANSCRIPTION
     );
+
+    const handleGenerateTranscription = useCallback(
+        async (videoId: string) => {
+          if (featureUsageExceeded) {
+            return;
+          }
+
+          const result = await getYoutubeTranscript(videoId);
+
+          setTranscript(result);
+        },
+        [featureUsageExceeded]
+    );
+
+    useEffect(() => {
+        handleGenerateTranscription(videoId);
+    }, [handleGenerateTranscription, videoId]);
 
     return (
         <div className='border p-4 pb-0 rounded-xl gap-4 flex flex-col'>
