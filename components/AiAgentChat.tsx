@@ -15,8 +15,6 @@ function AiAgentChat({ videoId }: { videoId: string }) {
         videoId,
       },
     });
-
-    console.log(videoId)
     interface ToolInvocation {
         toolCallId: string;
         toolName: string;
@@ -49,13 +47,13 @@ function AiAgentChat({ videoId }: { videoId: string }) {
         const randomId = Math.random().toString(36).substring(2, 15);
 
         const userMessage: Message = {
-            id: `generate-script-${randomId}`,
-            role: "user",
-            content:
-                "Generate a step-by-step shooting script for this video that I can use on my own channel to produce a video that is similar to this one, dont do any other steps such as generating a image, just generate the script only!",
+          id: `generate-script-${randomId}`,
+          role: "user",
+          content:
+            "Generate a step-by-step shooting script for this video that I can use on my own channel to produce a video that is similar to this one which mean do not just send the transcripts as the script but use necessary tools needed for generating script , create new one based on those content , dont do any other steps such as generating a image, just generate the script only!",
         };
         append(userMessage);
-    };
+      };
 
     const generateTitle = async () => {
         const randomId = Math.random().toString(36).substring(2, 15);
@@ -153,15 +151,28 @@ function AiAgentChat({ videoId }: { videoId: string }) {
                         <input
                             className="flex-1 px-4 py-2 text-sm border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 ocus:border-transparent"
                             type="text"
-                            placeholder='Enter a question...'
+                            placeholder={
+                                !isVideoAnalysisEnabled
+                                    ? "Upgrade to ask anything about your video..."
+                                    : "Ask anything about your video..."
+                            }
                             value={input}
                             onChange={handleInputChange}
                         />
                         <Button
                             type="submit"
+                            disabled={
+                                status === "streaming" ||
+                                status === "submitted" ||
+                                !isVideoAnalysisEnabled
+                            }
                             className="px-4 py-2 bg-blue-500 text-white text-sm rounded-full hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Send
+                            {status === "streaming"
+                                ? "AI is replying..."
+                                : status === "submitted"
+                                    ? "AI is thinking..."
+                                    : "Send"}
                         </Button>
                     </form>
                     <div className="flex gap-2">

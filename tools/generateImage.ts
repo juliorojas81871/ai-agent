@@ -20,14 +20,14 @@ export const generateImage = (videoId: string, userId: string) =>
         };
 
         const isImageGenerationEnabled = await client.checkFlag(
-        schematicCtx,
-        FeatureFlag.IMAGE_GENERATION
+            schematicCtx,
+            FeatureFlag.IMAGE_GENERATION
         );
 
         if (!isImageGenerationEnabled) {
-        return {
-            error: "Image generation is not enabled, the user must upgrade",
-        };
+            return {
+                error: "Image generation is not enabled, the user must upgrade",
+            };
         }
 
         const image = await dalleImageGeneration(prompt, videoId);

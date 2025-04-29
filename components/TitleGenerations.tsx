@@ -5,11 +5,12 @@ import Usage from './Usage';
 import { FeatureFlag } from '@/features/flags';
 import { useSchematicEntitlement } from '@schematichq/schematic-react';
 import { Copy } from 'lucide-react';
+import { useQuery } from 'convex/react';
+import { api } from "@/convex/_generated/api";
 
 function TitleGenerations({ videoId }: { videoId: string }) {
     const { user } = useUser();
-    // TODO: pull from convex db
-    const titles = [];
+    const titles = useQuery(api.titles.list, { videoId, userId: user?.id ?? "" });
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
