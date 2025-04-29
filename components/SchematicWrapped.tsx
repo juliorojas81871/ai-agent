@@ -20,23 +20,31 @@ const SchematicWrapped = ({ children }: { children: React.ReactNode }) => {
             user?.fullName ??
             user?.emailAddresses[0]?.emailAddress;
 
-        identify({
-            // company level key
-            company: {
-                keys: {
-                    id: user.id,
-                },
-                name: userName,
-            },
-            // user level key
-            keys: {
-                id: user.id,
-            },
-            name: userName,
-        });
+        // Identify user with Schematic
+        const identifyUser = async () => {
+            try {
+                await identify({
+                    // company level key
+                    company: {
+                        keys: {
+                            id: user.id,
+                        },
+                        name: userName,
+                    },
+                    // user level key
+                    keys: {
+                        id: user.id,
+                    },
+                    name: userName,
+                });
+                lastIdentifiedUserId.current = user.id;
+            } catch (error) {
+                console.error('Error identifying user with Schematic:', error);
+            }
+        };
 
-        lastIdentifiedUserId.current = user.id;
-    }, [user?.id, identify]); // Only depend on user.id instead of the entire user object
+        identifyUser();
+    }, [user?.id, identify]);
 
     return children;
 }

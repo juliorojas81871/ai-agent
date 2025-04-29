@@ -78,15 +78,21 @@ export async function getYoutubeTranscript(videoId: string) {
         transcript,
       });
 
-      await client.track({
-        event: featureFlagEvents[FeatureFlag.TRANSCRIPTION].event,
-        company: {
-          id: user.id,
-        },
-        user: {
-          id: user.id,
-        },
-      });
+      // Track usage after successful transcript generation
+      try {
+        await client.track({
+          event: featureFlagEvents[FeatureFlag.TRANSCRIPTION].event,
+          company: {
+            id: user.id,
+          },
+          user: {
+            id: user.id,
+          },
+        });
+      } catch (error) {
+        // Log error but don't fail the operation
+        console.error('Error tracking transcript usage:', error);
+      }
 
       return {
         transcript,

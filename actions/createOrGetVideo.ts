@@ -57,15 +57,21 @@ export const createOrGetVideo = async (
             userId,
         });
 
-        await client.track({
-            event: featureFlagEvents[FeatureFlag.ANALYSE_VIDEO].event,
-            company: {
-                id: userId,
-            },
-            user: {
-                id: userId,
-            },
-        });
+        // Track usage after successful video creation
+        try {
+            await client.track({
+                event: featureFlagEvents[FeatureFlag.ANALYSE_VIDEO].event,
+                company: {
+                    id: userId,
+                },
+                user: {
+                    id: userId,
+                },
+            });
+        } catch (error) {
+            // Log error but don't fail the operation
+            console.error('Error tracking usage:', error);
+        }
 
         return {
             success: true,
