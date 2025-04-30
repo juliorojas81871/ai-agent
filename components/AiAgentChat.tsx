@@ -60,10 +60,10 @@ function AiAgentChat({ videoId }: { videoId: string }) {
         const userMessage: Message = {
           id: `generate-title-${randomId}`,
           role: "user",
-          content: "Generate a title for this video and use necessary tools to get info about the video",
+          content: "Please generate a new title for this video using the generateTitle tool.",
         };
         append(userMessage);
-      };
+    };
     const generateImage = async () => {
         const randomId = Math.random().toString(36).substring(2, 15);
         const userMessage: Message = {

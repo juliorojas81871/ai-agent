@@ -23,13 +23,23 @@ export const generate = mutation({
     title: v.string(),
   },
   handler: async (ctx, args) => {
-    // Store the generated title
-    const titleId = await ctx.db.insert("titles", {
-      videoId: args.videoId,
-      userId: args.userId,
-      title: args.title,
-    });
+    try {
+      // Validate input
+      if (!args.videoId || !args.userId || !args.title) {
+        throw new Error("Missing required fields");
+      }
 
-    return titleId;
+      // Always create a new title entry
+      const titleId = await ctx.db.insert("titles", {
+        videoId: args.videoId,
+        userId: args.userId,
+        title: args.title,
+      });
+
+      return titleId;
+    } catch (error) {
+      console.error("Error in generate title mutation:", error);
+      throw error;
+    }
   },
 });

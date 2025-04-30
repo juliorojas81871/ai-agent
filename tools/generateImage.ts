@@ -4,7 +4,7 @@ import { client } from "@/lib/schematic";
 import { tool } from "ai";
 import { z } from "zod";
 
-export const generateImage = (videoId: string, userId: string) =>
+const generateImage = (videoId: string, userId: string) =>
     tool({
         description: "Generate an image",
         parameters: z.object({
@@ -34,3 +34,5 @@ export const generateImage = (videoId: string, userId: string) =>
         return { image };
     },
 });
+
+export default generateImage;
