@@ -5,7 +5,7 @@ import ThumbnailGeneration from '@/components/ThumbnailGeneration'
 import TitleGenerations from '@/components/TitleGenerations'
 import Transcription from '@/components/Transcription'
 import Usage from '@/components/Usage'
-// import YoutubeVideoDetails from '@/components/YoutubeVideoDetails'
+import YoutubeVideoDetails from '@/components/YoutubeVideoDetails'
 import { Doc } from '@/convex/_generated/dataModel'
 import { FeatureFlag } from '@/features/flags'
 import { useUser } from '@clerk/nextjs'
@@ -96,16 +96,6 @@ function AnalysisPage() {
     );
   }, [video]);
 
-  if (!videoId) {
-    return (
-      <div className="flex justify-center items-center p-4">
-        <div className="text-red-500 text-center">
-          <p className="font-medium">Invalid video ID</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className='xl:container mx-auto px-4 md:px-0'>
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
@@ -116,11 +106,10 @@ function AnalysisPage() {
                   <Usage featureFlag={FeatureFlag.ANALYSE_VIDEO} title='Analyse Video'/>
                   {VideoTranscriptionStatus}
                 </div>
+            {/* video transcription */}
 
             {/* video details */}
-            <div className="border border-gray-200 rounded-xl">
-              {/* <YoutubeVideoDetails videoId={videoId} /> */}
-            </div>
+            <YoutubeVideoDetails videoId={videoId} />
 
             {/* thumbnail */}
             <ThumbnailGeneration videoId={videoId} />
