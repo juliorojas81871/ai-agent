@@ -6,21 +6,57 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 
 function YoutubeVideoDetails({ videoId } : { videoId: string}) {
-    const[video, setVideo] = useState<VideoDetails | null> (null);
+    const [video, setVideo] = useState<VideoDetails | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchVideoDetails = async () => {
-          const video = await getVideoDetails(videoId);
-          setVideo(video);
+            try {
+                setIsLoading(true);
+                setError(null);
+                const video = await getVideoDetails(videoId);
+                if (!video) {
+                    setError("Failed to load video details. Please try again later.");
+                } else {
+                    setVideo(video);
+                }
+            } catch (err) {
+                setError("An error occurred while loading the video details.");
+                console.error("Error fetching video details:", err);
+            } finally {
+                setIsLoading(false);
+            }
         };
 
         fetchVideoDetails();
     }, [videoId]);
 
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center p-4">
+                <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex justify-center items-center p-4">
+                <div className="text-red-500 text-center">
+                    <p className="font-medium">{error}</p>
+                    <p className="text-sm mt-1">Please try refreshing the page</p>
+                </div>
+            </div>
+        );
+    }
+
     if (!video) {
         return (
             <div className="flex justify-center items-center p-4">
-            <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+                <div className="text-gray-500 text-center">
+                    <p className="font-medium">No video details available</p>
+                </div>
             </div>
         );
     }

@@ -8,6 +8,11 @@ const youtube = google.youtube({
 });
 
 export async function getVideoDetails(videoId: string) {
+    if (!process.env.YOUTUBE_API_KEY) {
+        console.error("❌ YouTube API key is not configured");
+        return null;
+    }
+
     try {
         const videoResponse = await youtube.videos.list({
             part: ["statistics", "snippet"],
@@ -16,15 +21,22 @@ export async function getVideoDetails(videoId: string) {
 
         const videoDetails = videoResponse.data.items?.[0];
 
-        if (!videoDetails) throw new Error("Video not found");
+        if (!videoDetails) {
+            console.error("❌ Video not found:", videoId);
+            return null;
+        }
 
         const channelResponse = await youtube.channels.list({
             part: ["snippet", "statistics"],
             id: [videoDetails.snippet?.channelId || ""],
-            key: process.env.YOUTUBE_API_KEY,
         });
 
         const channelDetails = channelResponse.data.items?.[0];
+
+        if (!channelDetails) {
+            console.error("❌ Channel details not found for video:", videoId);
+            return null;
+        }
 
         const video: VideoDetails = {
             // video info
@@ -45,8 +57,8 @@ export async function getVideoDetails(videoId: string) {
             // channel info
             channel: {
                 title: videoDetails.snippet?.channelTitle || "Unknown Channel",
-                thumbnail: channelDetails?.snippet?.thumbnails?.default?.url || "",
-                subscribers: channelDetails?.statistics?.subscriberCount || "0",
+                thumbnail: channelDetails.snippet?.thumbnails?.default?.url || "",
+                subscribers: channelDetails.statistics?.subscriberCount || "0",
             },
         };
         return video;
