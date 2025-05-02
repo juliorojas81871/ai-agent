@@ -9,28 +9,50 @@ function YoutubeVideoDetails({ videoId } : { videoId: string}) {
     const [video, setVideo] = useState<VideoDetails | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [retryCount, setRetryCount] = useState(0);
 
     useEffect(() => {
+        let isMounted = true;
         const fetchVideoDetails = async () => {
+            if (!videoId) {
+                setError("No video ID provided");
+                setIsLoading(false);
+                return;
+            }
+
             try {
                 setIsLoading(true);
                 setError(null);
                 const video = await getVideoDetails(videoId);
+                
+                if (!isMounted) return;
+
                 if (!video) {
                     setError("Failed to load video details. Please try again later.");
                 } else {
                     setVideo(video);
                 }
             } catch (err) {
+                if (!isMounted) return;
                 setError("An error occurred while loading the video details.");
                 console.error("Error fetching video details:", err);
             } finally {
-                setIsLoading(false);
+                if (isMounted) {
+                    setIsLoading(false);
+                }
             }
         };
 
         fetchVideoDetails();
-    }, [videoId]);
+
+        return () => {
+            isMounted = false;
+        };
+    }, [videoId, retryCount]);
+
+    const handleRetry = () => {
+        setRetryCount(prev => prev + 1);
+    };
 
     if (isLoading) {
         return (
@@ -45,7 +67,12 @@ function YoutubeVideoDetails({ videoId } : { videoId: string}) {
             <div className="flex justify-center items-center p-4">
                 <div className="text-red-500 text-center">
                     <p className="font-medium">{error}</p>
-                    <p className="text-sm mt-1">Please try refreshing the page</p>
+                    <button 
+                        onClick={handleRetry}
+                        className="mt-2 px-4 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                    >
+                        Retry
+                    </button>
                 </div>
             </div>
         );
