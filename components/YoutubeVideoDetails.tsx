@@ -9,6 +9,7 @@ function YoutubeVideoDetails({ videoId } : { videoId: string}) {
     const [video, setVideo] = useState<VideoDetails | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isMounted, setIsMounted] = useState(false);
 
     const fetchVideoDetails = useCallback(async () => {
         try {
@@ -29,18 +30,37 @@ function YoutubeVideoDetails({ videoId } : { videoId: string}) {
     }, [videoId]);
 
     useEffect(() => {
+        setIsMounted(true);
         fetchVideoDetails();
     }, [fetchVideoDetails]);
 
     // Debug state changes
     useEffect(() => {
-        console.log('State changed:', { isLoading, error: !!error, video: !!video });
-    }, [isLoading, error, video]);
+        if (isMounted) {
+            console.log('State changed:', { isLoading, error: !!error, video: !!video });
+        }
+    }, [isLoading, error, video, isMounted]);
 
-    if (isLoading) {
+    if (!isMounted || isLoading) {
         return (
             <div className="flex justify-center items-center p-4">
-                <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+                <div 
+                    className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full"
+                    style={{
+                        animation: 'spin 1s linear infinite',
+                        WebkitAnimation: 'spin 1s linear infinite'
+                    }}
+                />
+                <style jsx>{`
+                    @keyframes spin {
+                        from { transform: rotate(0deg); }
+                        to { transform: rotate(360deg); }
+                    }
+                    @-webkit-keyframes spin {
+                        from { -webkit-transform: rotate(0deg); }
+                        to { -webkit-transform: rotate(360deg); }
+                    }
+                `}</style>
             </div>
         );
     }
@@ -79,6 +99,7 @@ function YoutubeVideoDetails({ videoId } : { videoId: string}) {
                         height={500}
                         className="w-full rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300"
                         priority
+                        loading="eager"
                     />
                 </div>
 
@@ -97,6 +118,7 @@ function YoutubeVideoDetails({ videoId } : { videoId: string}) {
                             height={48}
                             className="w-10 h-10 @md:w-12 @md:h-12 rounded-full border-2 border-gray-100"
                             priority
+                            loading="eager"
                         />
 
                         <div>
