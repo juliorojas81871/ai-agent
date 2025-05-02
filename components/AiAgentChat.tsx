@@ -1,11 +1,12 @@
 "use client";
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Message, useChat } from "@ai-sdk/react";
 import { Button } from './ui/button';
 import ReactMarkdown from "react-markdown";
 import { useSchematicFlag } from '@schematichq/schematic-react';
 import { FeatureFlag } from '@/features/flags';
-import { ImageIcon, LetterText, PenIcon } from 'lucide-react';
+import { BotIcon, ImageIcon, LetterText, PenIcon } from 'lucide-react';
+import { toast } from 'sonner';
 
 
 function AiAgentChat({ videoId }: { videoId: string }) {
@@ -15,6 +16,9 @@ function AiAgentChat({ videoId }: { videoId: string }) {
         videoId,
       },
     });
+
+    const bottomRef = useRef<HTMLDivElement>(null);
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
     interface ToolInvocation {
         toolCallId: string;
         toolName: string;
@@ -74,13 +78,79 @@ function AiAgentChat({ videoId }: { videoId: string }) {
         append(userMessage);
     };
 
+    useEffect(() => {
+        if (bottomRef.current && messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop =
+            messagesContainerRef.current.scrollHeight;
+        }
+    }, [messages]);
+
+    useEffect(() => {
+        let toastId;
+    
+        switch (status) {
+          case "submitted":
+            toastId = toast("Agent is thinking...", {
+              id: toastId,
+              icon: <BotIcon className="w-4 h-4" />,
+              duration: 5000,
+              position: "top-center",
+              style: {
+                background: "#EFF6FF",
+                color: "#1E40AF",
+                border: "1px solid #3B82F6",
+                fontSize: "1.1rem",
+                padding: "1rem",
+                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+              }
+            });
+            break;
+          case "streaming":
+            toastId = toast("Agent is replying...", {
+              id: toastId,
+              icon: <BotIcon className="w-4 h-4" />,
+              duration: 5000,
+              position: "top-center",
+              style: {
+                background: "#EFF6FF",
+                color: "#1E40AF",
+                border: "1px solid #3B82F6",
+                fontSize: "1.1rem",
+                padding: "1rem",
+                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+              }
+            });
+            break;
+          case "error":
+            toastId = toast("Whoops! Something went wrong, please try again.", {
+              id: toastId,
+              icon: <BotIcon className="w-4 h-4" />,
+              duration: 5000,
+              position: "top-center",
+              style: {
+                background: "#FEE2E2",
+                color: "#DC2626",
+                border: "1px solid #DC2626",
+                fontSize: "1.1rem",
+                padding: "1rem",
+                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+              }
+            });
+            break;
+          case "ready":
+            toast.dismiss(toastId);
+    
+            break;
+        }
+      }, [status]);
+
     return (
         <div className='flex flex-col h-full'>
             <div className="hidden lg:block px-4 pb-3 border-b border-gray-100">
                 <h2 className="text-lg font-semibold text-gray-800">AI Agent</h2>
             </div>
             {/* messages */}
-            <div className="flex-1 overflow-y-auto px-4 py-4">
+            <div className="flex-1 overflow-y-auto px-4 py-4" ref={messagesContainerRef}>
                 <div className="space-y-6">
                     {messages.length === 0 && (
                     <div className="flex items-center justify-center h-full min-h-[200px]">
@@ -110,7 +180,7 @@ function AiAgentChat({ videoId }: { videoId: string }) {
                                     {m.parts.map((part, i) =>
                                     part.type === "text" ? (
                                         <div key={i} className="prose prose-sm max-w-none">
-                                        <ReactMarkdown>{part.text}</ReactMarkdown>
+                                            <ReactMarkdown>{part.text}</ReactMarkdown>
                                         </div>
                                     ) : part.type === "tool-invocation" ? (
                                         <div
@@ -139,6 +209,7 @@ function AiAgentChat({ videoId }: { videoId: string }) {
                                     <ReactMarkdown>{m.content}</ReactMarkdown>
                                 </div>
                                 )}
+                                <div ref={bottomRef} />
                             </div>
                         </div>
                     ))}

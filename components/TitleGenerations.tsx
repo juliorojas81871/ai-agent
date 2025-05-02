@@ -7,6 +7,7 @@ import { useSchematicEntitlement } from '@schematichq/schematic-react';
 import { Copy } from 'lucide-react';
 import { useQuery } from 'convex/react';
 import { api } from "@/convex/_generated/api";
+import { toast } from 'sonner';
 
 function TitleGenerations({ videoId }: { videoId: string }) {
     const { user } = useUser();
@@ -14,6 +15,18 @@ function TitleGenerations({ videoId }: { videoId: string }) {
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
+        toast.success("Copied to clipboard", {
+            duration: 3000,
+            position: "top-center",
+            style: {
+                background: "#ECFDF5",
+                color: "#065F46",
+                border: "1px solid #059669",
+                fontSize: "1.1rem",
+                padding: "1rem",
+                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            }
+        });
     };
 
     const { value: isTitleGenerationEnabled } = useSchematicEntitlement(
