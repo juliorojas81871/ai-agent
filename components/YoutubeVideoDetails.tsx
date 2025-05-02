@@ -4,12 +4,20 @@ import { VideoDetails } from '@/types/types';
 import { Calendar, Eye, MessageCircle, ThumbsUp } from 'lucide-react';
 import Image from 'next/image';
 import React, { useEffect, useState, useCallback } from 'react'
+import '@/styles/loading.css';
+
+// Separate loading component
+const LoadingSpinner = () => (
+    <div className="flex justify-center items-center p-4">
+        <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full loading-spinner" />
+    </div>
+);
 
 function YoutubeVideoDetails({ videoId } : { videoId: string}) {
     const [video, setVideo] = useState<VideoDetails | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [isMounted, setIsMounted] = useState(false);
+    const [isClient, setIsClient] = useState(false);
 
     const fetchVideoDetails = useCallback(async () => {
         try {
@@ -29,40 +37,15 @@ function YoutubeVideoDetails({ videoId } : { videoId: string}) {
         }
     }, [videoId]);
 
+    // Handle client-side mounting
     useEffect(() => {
-        setIsMounted(true);
+        setIsClient(true);
         fetchVideoDetails();
     }, [fetchVideoDetails]);
 
-    // Debug state changes
-    useEffect(() => {
-        if (isMounted) {
-            console.log('State changed:', { isLoading, error: !!error, video: !!video });
-        }
-    }, [isLoading, error, video, isMounted]);
-
-    if (!isMounted || isLoading) {
-        return (
-            <div className="flex justify-center items-center p-4">
-                <div 
-                    className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full"
-                    style={{
-                        animation: 'spin 1s linear infinite',
-                        WebkitAnimation: 'spin 1s linear infinite'
-                    }}
-                />
-                <style jsx>{`
-                    @keyframes spin {
-                        from { transform: rotate(0deg); }
-                        to { transform: rotate(360deg); }
-                    }
-                    @-webkit-keyframes spin {
-                        from { -webkit-transform: rotate(0deg); }
-                        to { -webkit-transform: rotate(360deg); }
-                    }
-                `}</style>
-            </div>
-        );
+    // Show loading state on server and initial client render
+    if (!isClient || isLoading) {
+        return <LoadingSpinner />;
     }
 
     if (error) {
@@ -86,8 +69,7 @@ function YoutubeVideoDetails({ videoId } : { videoId: string}) {
         );
     }
 
-    // Memoize the video details JSX to prevent unnecessary re-renders
-    const videoDetailsJSX = (
+    return (
         <div className="@container bg-white rounded-xl">
             <div className="flex flex-col gap-8">
                 {/* thumbnail */}
@@ -171,8 +153,6 @@ function YoutubeVideoDetails({ videoId } : { videoId: string}) {
             </div>
         </div>
     );
-
-    return videoDetailsJSX;
 }
 
 export default React.memo(YoutubeVideoDetails);
