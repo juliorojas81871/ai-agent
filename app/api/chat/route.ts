@@ -3,7 +3,6 @@ import { currentUser } from "@clerk/nextjs/server";
 import { streamText, tool } from "ai";
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { NextResponse } from "next/server";
-import { getVideoIdFromUrl } from "@/lib/getVideoIdFromUrl";
 import { z } from "zod";
 import { titleGeneration } from "@/actions/titleGeneration";
 import { dalleImageGeneration } from "@/actions/dalleImageGeneration";
