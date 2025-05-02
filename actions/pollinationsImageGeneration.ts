@@ -6,10 +6,9 @@ import { getConvexClient } from "@/lib/convex";
 import { client } from "@/lib/schematic";
 import { currentUser } from "@clerk/nextjs/server";
 
-const IMAGE_SIZE = "1792x1024" as const;
 const convexClient = getConvexClient();
 
-export const dalleImageGeneration = async (prompt: string, videoId: string) => {
+export const pollinationsImageGeneration = async (prompt: string, videoId: string) => {
     const user = await currentUser();
 
     if (!user?.id) {

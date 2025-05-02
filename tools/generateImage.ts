@@ -1,4 +1,4 @@
-import { dalleImageGeneration } from "@/actions/dalleImageGeneration";
+import { pollinationsImageGeneration } from "@/actions/pollinationsImageGeneration";
 import { FeatureFlag } from "@/features/flags";
 import { client } from "@/lib/schematic";
 import { tool } from "ai";
@@ -30,7 +30,7 @@ const generateImage = (videoId: string, userId: string) =>
             };
         }
 
-        const image = await dalleImageGeneration(prompt, videoId);
+        const image = await pollinationsImageGeneration(prompt, videoId);
         return { image };
     },
 });

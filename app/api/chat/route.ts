@@ -5,7 +5,7 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { titleGeneration } from "@/actions/titleGeneration";
-import { dalleImageGeneration } from "@/actions/dalleImageGeneration";
+import { pollinationsImageGeneration } from "@/actions/pollinationsImageGeneration";
 import { getYoutubeTranscript } from "@/actions/getYoutubeTranscript";
 
 const google = createGoogleGenerativeAI({
@@ -66,9 +66,9 @@ When using tools that involve caching (like transcripts), explain that the data 
                     if (!transcript.transcript || transcript.transcript.length === 0) {
                         throw new Error("No transcript available for this video");
                     }
-                    return { 
+                    return {
                         transcript: transcript.transcript,
-                        cache: transcript.cache 
+                        cache: transcript.cache
                     };
                 },
             }),
@@ -81,7 +81,7 @@ When using tools that involve caching (like transcripts), explain that the data 
                     const videoDetails = await getVideoDetails(videoId);
                     const summary = videoDetails?.title || "A YouTube video";
                     const titleConsiderations = "Make it SEO friendly and engaging";
-                    
+
                     const result = await titleGeneration(videoId, summary, titleConsiderations);
                     if (!result.success) {
                         throw new Error(result.error || "Failed to generate title");
@@ -97,7 +97,7 @@ When using tools that involve caching (like transcripts), explain that the data 
                 execute: async ({ videoId }) => {
                     const transcript = await getYoutubeTranscript(videoId);
                     const videoDetails = await getVideoDetails(videoId);
-                    
+
                     if (!transcript.transcript || transcript.transcript.length === 0) {
                         throw new Error("No transcript available for this video");
                     }
@@ -123,8 +123,8 @@ When using tools that involve caching (like transcripts), explain that the data 
                 execute: async ({ videoId }) => {
                     const videoDetails = await getVideoDetails(videoId);
                     const prompt = `Create an eye-catching YouTube thumbnail for a video titled "${videoDetails?.title || 'YouTube Video'}". The thumbnail should be visually appealing and represent the video's content.`;
-                    
-                    const result = await dalleImageGeneration(prompt, videoId);
+
+                    const result = await pollinationsImageGeneration(prompt, videoId);
                     if (!result.imageUrl) {
                         throw new Error("Failed to generate thumbnail");
                     }
