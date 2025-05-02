@@ -119,7 +119,7 @@ function AnalysisPage() {
 
             {/* video details */}
             <div className="border border-gray-200 rounded-xl">
-              <YoutubeVideoDetails videoId={videoId} />
+              {/* <YoutubeVideoDetails videoId={videoId} /> */}
             </div>
 
             {/* thumbnail */}
