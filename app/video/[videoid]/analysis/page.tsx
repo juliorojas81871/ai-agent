@@ -58,7 +58,7 @@ function AnalysisPage() {
     };
 
     fetchVideo();
-  }, [videoId, user?.id, hasFetched, isLoading]);
+  }, [videoId, user?.id, hasFetched, isLoading, !video]);
 
   // Memoize the status component to prevent unnecessary rerenders
   const VideoTranscriptionStatus = React.useMemo(() => {

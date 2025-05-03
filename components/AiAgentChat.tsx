@@ -51,10 +51,10 @@ const formatToolInvocation = (part: ToolPart): string => {
 
 function AiAgentChat({ videoId }: { videoId: string }) {
     const { messages, input, handleInputChange, handleSubmit, append, status } = useChat({
-        maxSteps: 5,
-        body: {
-            videoId,
-        },
+      maxSteps: 5,
+      body: {
+        videoId,
+      },
     });
 
     const bottomRef = useRef<HTMLDivElement>(null);
@@ -72,8 +72,8 @@ function AiAgentChat({ videoId }: { videoId: string }) {
     const generateScript = useCallback(async () => {
         const randomId = Math.random().toString(36).substring(2, 15);
         const userMessage: Message = {
-            id: `generate-script-${randomId}`,
-            role: "user",
+          id: `generate-script-${randomId}`,
+          role: "user",
             content: "Generate a step-by-step shooting script for this video that I can use on my own channel to produce a video that is similar to this one which mean do not just send the transcripts as the script but use necessary tools needed for generating script , create new one based on those content , dont do any other steps such as generating a image, just generate the script only!",
         };
         append(userMessage);
@@ -82,9 +82,9 @@ function AiAgentChat({ videoId }: { videoId: string }) {
     const generateTitle = useCallback(async () => {
         const randomId = Math.random().toString(36).substring(2, 15);
         const userMessage: Message = {
-            id: `generate-title-${randomId}`,
-            role: "user",
-            content: "Please generate a new title for this video using the generateTitle tool.",
+          id: `generate-title-${randomId}`,
+          role: "user",
+          content: "Please generate a new title for this video using the generateTitle tool.",
         };
         append(userMessage);
     }, [append]);
@@ -129,24 +129,24 @@ function AiAgentChat({ videoId }: { videoId: string }) {
                 }
             });
         };
-
+    
         switch (status) {
-            case "submitted":
+          case "submitted":
                 showToast("Agent is thinking...");
-                break;
-            case "streaming":
+            break;
+          case "streaming":
                 showToast("Agent is replying...");
-                break;
-            case "error":
+            break;
+          case "error":
                 showToast("Whoops! Something went wrong, please try again.", true);
-                break;
-            case "ready":
+            break;
+          case "ready":
                 if (toastRef.current) {
                     toast.dismiss(toastRef.current);
                 }
-                break;
+            break;
         }
-    }, [status]);
+      }, [status]);
 
     // Memoized button states
     const isSubmitDisabled = useMemo(() => 
@@ -190,60 +190,60 @@ function AiAgentChat({ videoId }: { videoId: string }) {
                     </div>
                     )}
                     <div role="list">
-                        {messages.map((m) => (
-                            <div
-                                key={m.id}
-                                className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+                    {messages.map((m) => (
+                        <div
+                            key={m.id}
+                            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
                                 role="listitem"
-                            >
-                                <div
-                                    className={`max-w-[85%] ${
-                                    m.role === "user" ? "bg-blue-500" : "bg-gray-100"
-                                    } rounded-2xl px-4 py-3`}
+                        >
+                            <div
+                                className={`max-w-[85%] ${
+                                m.role === "user" ? "bg-blue-500" : "bg-gray-100"
+                                } rounded-2xl px-4 py-3`}
                                     role="article"
                                     aria-label={`${m.role === "user" ? "Your message" : "AI response"}`}
-                                >
-                                    {m.parts && m.role === "assistant" ? (
-                                    // AI message
-                                    <div className="space-y-3">
-                                        {m.parts.map((part, i) =>
-                                        part.type === "text" ? (
-                                            <div key={i} className="prose prose-sm max-w-none">
-                                                <ReactMarkdown>{part.text}</ReactMarkdown>
-                                            </div>
-                                        ) : part.type === "tool-invocation" ? (
-                                            <div
-                                            key={i}
+                            >
+                                {m.parts && m.role === "assistant" ? (
+                                // AI message
+                                <div className="space-y-3">
+                                    {m.parts.map((part, i) =>
+                                    part.type === "text" ? (
+                                        <div key={i} className="prose prose-sm max-w-none">
+                                            <ReactMarkdown>{part.text}</ReactMarkdown>
+                                        </div>
+                                    ) : part.type === "tool-invocation" ? (
+                                        <div
+                                        key={i}
                                             className="bg-white/50 rounded-lg p-2 space-y-2 text-gray-800"
                                             role="status"
                                             aria-label="Tool usage"
-                                            >
-                                            <div className="font-medium text-xs">
-                                                {formatToolInvocation(part as ToolPart)}
-                                            </div>
-                                            {(part as ToolPart).toolInvocation.result && (
-                                                <pre className="text-xs bg-white/75 p-2 rounded overflow-auto max-h-40">
-                                                {JSON.stringify(
-                                                    (part as ToolPart).toolInvocation.result,
-                                                    null,
-                                                    2
-                                                )}
-                                                </pre>
+                                        >
+                                        <div className="font-medium text-xs">
+                                            {formatToolInvocation(part as ToolPart)}
+                                        </div>
+                                        {(part as ToolPart).toolInvocation.result && (
+                                            <pre className="text-xs bg-white/75 p-2 rounded overflow-auto max-h-40">
+                                            {JSON.stringify(
+                                                (part as ToolPart).toolInvocation.result,
+                                                null,
+                                                2
                                             )}
-                                            </div>
-                                        ) : null
+                                            </pre>
                                         )}
-                                    </div>
-                                    ) : (
-                                    // User message
-                                    <div className="prose prose-sm max-w-none text-white">
-                                        <ReactMarkdown>{m.content}</ReactMarkdown>
-                                    </div>
+                                        </div>
+                                    ) : null
                                     )}
-                                    <div ref={bottomRef} />
                                 </div>
+                                ) : (
+                                // User message
+                                <div className="prose prose-sm max-w-none text-white">
+                                    <ReactMarkdown>{m.content}</ReactMarkdown>
+                                </div>
+                                )}
+                                <div ref={bottomRef} />
                             </div>
-                        ))}
+                        </div>
+                    ))}
                     </div>
                 </div>
             </div>
