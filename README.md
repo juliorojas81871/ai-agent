@@ -47,4 +47,4 @@ http://localhost:3000/
 ```
 
 ## Example Pic:
-![Notes Example Pic](https://github.com/juliorojas81871/ai-agent/tree/main/public/main.jpg)
+![Notes Example Pic](https://github.com/juliorojas81871/ai-agent/tree/main/public/main.png)
