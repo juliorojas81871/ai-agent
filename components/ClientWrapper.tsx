@@ -19,7 +19,7 @@ export default function ClientWrapper({
 
   return (
     <ConvexClientProvider>
-      <SchematicProvider  publishableKey={schematicPubKey}>
+      <SchematicProvider  publishableKey={schematicPubKey} useWebSocket>
         <SchematicWrapped>{children}</SchematicWrapped>
       </SchematicProvider>
     </ConvexClientProvider>

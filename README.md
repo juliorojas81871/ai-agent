@@ -3,7 +3,7 @@
 ## Description
 
 An AI-powered content analysis platform that helps YouTube creators optimize their videos through advanced insights. It features smart transcription, AI-generated thumbnails and titles, viral shot scripting, and interactive AI agent conversations. All built with Next.js, React, and integrated AI models like Anthropic and OpenAI.
-If anyone want see this code, [please click at this link](https://ai-agent-n7654qqpz-juliorojas81871s-projects.vercel.app).
+If anyone want see this code, [please click at this link](https://ai-agent-n7654qqpz-juliorojas81871s-projects.vercel.app). The Credit Card number to use is 4242 4242 4242 4242. The expiration, CVC, name, and address can be anything you want.
 
 ## Technologies & Methods Used
 
